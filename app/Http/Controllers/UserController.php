@@ -1,65 +1,68 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\User;
 
-Class UserController extends Controller {
+Class UserController extends Controller 
+{
     private $request;
-    public function __construct(Request $request){
+    
+    public function __construct(Request $request)
+    {
         $this->request = $request;
     }
-    public function getUsers(){
-        $users = User::all();
-        return response()->json(['data' => $users], 200);
-    }
     
-    public function index()
+    // Get/show users
+    public function getUsers()
     {
         $users = User::all();
-        return $this->successResponse($users);  
+        return response()->json($users, 200);
     }
 
-    public function add(Request $request ){
+    // Add users
+    public function addUsers(Request $request )
+    {
         
         $rules = [
-        'username' => 'required|max:20',
-        'password' => 'required|max:20'
+            $this->validate($request, [
+                'username' => 'required|max:20',
+                'password' => 'required|max:20'
+            ])
         ];
 
         $this->validate($request,$rules);
 
         $user = User::create($request->all());
-        return $this->json($user, 200);
+        return $this->successResponse($user, Response::HTTP_CREATED);
     }
 
-    public function updateUser(Request $request, $id) {
+    // Update users
+    public function updateUser(Request $request, $id) 
+    {
+        
         $rules = [
-            'username' => 'required | max:20',
-            'password' => 'required | max:20'
+            $this->validate($request, [
+                'username' => 'required|max:20',
+                'password' => 'required|max:20'
+            ])
         ];
     
         $this->validate($request, $rules);
-    
         $user = User::findOrFail($id);
-    
         $user->fill($request->all());
     
-        if ($user->isClean()) {
-            return response()->json("At least one value must
-            change", 403);
-        } else {
-            $user->save();
-            return response()->json($user, 200);
-        }
+        $user->save();
+
+        return $user;
     }
 
-    public function deleteUser($id) {
+    // Delete user
+    public function deleteUser($id) 
+    {
         $user = User::findOrFail($id);
-    
         $user->delete();
-    
-        return response()->json($user, 200);
     }
 }
     
