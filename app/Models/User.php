@@ -9,11 +9,11 @@ class User extends Model
 {
 public $timestamps = false; 
   
-protected $primaryKey = 'username';  
+protected $primaryKey = 'usernum';  
   
 protected $table = 'tbluser'; 
   
 protected $fillable = [ 
-    'username', 'password' 
+    'usernum', 'username', 'password' 
 ]; 
 }
